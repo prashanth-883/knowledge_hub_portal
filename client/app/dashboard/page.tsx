@@ -6,6 +6,7 @@ import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import toast, { Toaster } from 'react-hot-toast';
 import AddResourceModal from '../../components/AddResourceModal';
+import { API_BASE_URL } from '@/lib/api-config';
 
 interface Resource {
     _id: string;
@@ -36,7 +37,7 @@ export default function Dashboard() {
                 const config = {
                     headers: { Authorization: `Bearer ${user.token}` },
                 };
-                const { data } = await axios.get('http://localhost:5000/api/resources', config);
+                const { data } = await axios.get(`${API_BASE_URL}/api/resources`, config);
                 setResources(data);
             } catch (error) {
                 console.error(error);

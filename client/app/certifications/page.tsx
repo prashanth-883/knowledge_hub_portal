@@ -5,6 +5,7 @@ import Navbar from '../../components/Navbar';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '../../context/AuthContext';
 import { quizzes } from '../../data/quizData';
+import { API_BASE_URL } from '@/lib/api-config';
 
 export default function CertificationsPage() {
     const { user } = useAuth();
@@ -19,7 +20,7 @@ export default function CertificationsPage() {
                 return;
             }
             try {
-                const response = await fetch('http://localhost:5000/api/certifications/me', {
+                const response = await fetch(`${API_BASE_URL}/api/certifications/me`, {
                     headers: {
                         'Authorization': `Bearer ${user?.token}`
                     }

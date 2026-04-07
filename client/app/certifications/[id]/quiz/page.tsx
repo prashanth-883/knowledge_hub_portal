@@ -6,6 +6,7 @@ import Navbar from '../../../../components/Navbar';
 import { useAuth } from '../../../../context/AuthContext';
 import { quizzes } from '../../../../data/quizData';
 import BottomNav from '../../../../components/BottomNav';
+import { API_BASE_URL } from '@/lib/api-config';
 
 export default function QuizPage() {
     const { id } = useParams();
@@ -107,7 +108,7 @@ export default function QuizPage() {
         const finalScore = (correctAnswers / randomizedQuestions.length) * 100;
         
         try {
-            const response = await fetch('http://localhost:5000/api/certifications/submit', {
+            const response = await fetch(`${API_BASE_URL}/api/certifications/submit`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

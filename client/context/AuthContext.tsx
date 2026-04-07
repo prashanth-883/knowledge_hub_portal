@@ -3,6 +3,7 @@
 import { createContext, useState, useEffect, useContext, ReactNode } from 'react';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
+import { API_BASE_URL } from '@/lib/api-config';
 
 interface User {
     _id: string;
@@ -41,7 +42,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         const fetchFavorites = async () => {
              if (user?.token) {
                  try {
-                     const { data } = await axios.get('http://localhost:5000/api/users/favorites', {
+                     const { data } = await axios.get(`${API_BASE_URL}/api/users/favorites`, {
                          headers: { Authorization: `Bearer ${user.token}` }
                      });
                      setFavoriteArticles(data.favoriteArticles || []);
@@ -57,7 +58,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     const login = async (username: string, password: string) => {
         try {
-            const { data } = await axios.post('http://localhost:5000/api/auth/login', { username, password });
+            const { data } = await axios.post(`${API_BASE_URL}/api/auth/login`, { username, password });
             setUser(data);
             localStorage.setItem('user', JSON.stringify(data));
             router.push('/');
@@ -71,7 +72,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     };
     const register = async (username: string, email: string, password: string) => {
         try {
-            await axios.post('http://localhost:5000/api/auth/register', { username, email, password });
+            await axios.post(`${API_BASE_URL}/api/auth/register`, { username, email, password });
         } catch (error: any) {
             if (error.code === 'ERR_NETWORK') {
                 throw new Error('Cannot connect to server. Ensure the backend is running.');
@@ -85,7 +86,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         if (!user?.token) return;
         try {
             const { data } = await axios.put(
-                'http://localhost:5000/api/users/favorites',
+                `${API_BASE_URL}/api/users/favorites`,
                 { articleId },
                 { headers: { Authorization: `Bearer ${user.token}` } }
             );

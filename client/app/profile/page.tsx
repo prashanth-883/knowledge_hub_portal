@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { articles } from '../../data/articlesData';
+import { API_BASE_URL } from '@/lib/api-config';
 
 const ProfilePage = () => {
     const { user, favoriteArticles, logout, toggleFavorite, loading } = useAuth();
@@ -17,7 +18,7 @@ const ProfilePage = () => {
         const fetchCertifications = async () => {
             if (!user) return;
             try {
-                const response = await fetch('http://localhost:5000/api/certifications/me', {
+                const response = await fetch(`${API_BASE_URL}/api/certifications/me`, {
                     headers: {
                         'Authorization': `Bearer ${user?.token}`
                     }

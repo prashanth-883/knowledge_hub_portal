@@ -4,6 +4,7 @@ import { useState } from 'react';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
+import { API_BASE_URL } from '@/lib/api-config';
 
 interface AddResourceModalProps {
     isOpen: boolean;
@@ -29,7 +30,7 @@ export default function AddResourceModal({ isOpen, onClose, onResourceAdded }: A
             };
 
             await axios.post(
-                'http://localhost:5000/api/resources',
+                `${API_BASE_URL}/api/resources`,
                 {
                     title,
                     url,
