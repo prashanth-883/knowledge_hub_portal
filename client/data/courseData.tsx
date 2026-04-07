@@ -1,4 +1,9 @@
 import React from 'react';
+import { pythonCourseContent } from './pythonCourseData';
+import { cCourseContent } from './cCourseData';
+import { htmlCourseContent } from './htmlCourseData';
+import { javaCourseContent } from './javaCourseData';
+import CodeBlock from '../components/CodeBlock';
 
 // Common interface for course data
 export interface SubItem {
@@ -10,7 +15,8 @@ export interface SubItem {
 export interface Topic {
     id: string;
     title: string;
-    subItems: SubItem[];
+    subItems?: SubItem[];
+    content?: React.ReactNode;
 }
 
 export interface Course {
@@ -79,19 +85,13 @@ export const courses: Record<string, Course> = {
                                         Let's break down the following code to understand it better:
                                     </p>
 
-                                    <div className="bg-gray-900 text-gray-100 rounded-lg p-6 font-mono text-sm overflow-x-auto mb-6">
-                                        <div className="flex justify-between text-gray-500 mb-2">
-                                            <span>hello_world.cpp</span>
-                                            <span>C++</span>
-                                        </div>
-                                        <pre><code>{`#include <iostream>
+                                    <CodeBlock language="cpp" code={`#include <iostream>
 using namespace std;
 
 int main() {
   cout << "Hello World!";
   return 0;
-}`}</code></pre>
-                                    </div>
+}`} />
 
                                     <h3 className="text-xl font-bold text-gray-800 mb-3">Example Explained</h3>
                                     <ul className="space-y-4 text-gray-700">
@@ -112,16 +112,14 @@ int main() {
                                     <p className="text-gray-700 mb-4">
                                         The <code>cout</code> object, together with the <code>&lt;&lt;</code> operator, is used to output values/print text:
                                     </p>
-                                    <div className="bg-gray-900 text-gray-100 rounded-lg p-6 font-mono text-sm overflow-x-auto mb-6">
-                                        <pre><code>{`#include <iostream>
+                                    <CodeBlock language="cpp" code={`#include <iostream>
 using namespace std;
 
 int main() {
   cout << "Hello World!";
   cout << "I am learning C++";
   return 0;
-}`}</code></pre>
-                                    </div>
+}`} />
                                     <p className="text-gray-700">
                                         You can add as many <code>cout</code> objects as you want. However, note that it does not insert a new line at the end of the output.
                                     </p>
@@ -182,11 +180,9 @@ int main() {
                                             {'}'}
                                         </pre>
                                     </div>
-                                    <div className="bg-gray-900 text-gray-100 rounded-lg p-6 font-mono text-sm overflow-x-auto mb-6">
-                                        <pre><code>{`if (20 > 18) {
+                                    <CodeBlock language="cpp" code={`if (20 > 18) {
   cout << "20 is greater than 18";
-}`}</code></pre>
-                                    </div>
+}`} />
                                 </section>
 
                                 <hr className="border-gray-200" />
@@ -196,15 +192,13 @@ int main() {
                                     <p className="text-gray-700 mb-4">
                                         Use the <code>else</code> statement to specify a block of code to be executed if the condition is <code>false</code>.
                                     </p>
-                                    <div className="bg-gray-900 text-gray-100 rounded-lg p-6 font-mono text-sm overflow-x-auto mb-6">
-                                        <pre><code>{`int time = 20;
+                                    <CodeBlock language="cpp" code={`int time = 20;
 if (time < 18) {
   cout << "Good day.";
 } else {
   cout << "Good evening.";
 }
-// Outputs "Good evening."`}</code></pre>
-                                    </div>
+// Outputs "Good evening."`} />
                                 </section>
                             </div>
                         )
@@ -225,16 +219,14 @@ if (time < 18) {
                                     <p className="text-gray-700 mb-4">
                                         A function is a block of code which only runs when it is called. You can pass data, known as parameters, into a function. Functions are used to perform certain actions, and they are important for reusing code: Define the code once, and use it many times.
                                     </p>
-                                    <div className="bg-gray-900 text-gray-100 rounded-lg p-6 font-mono text-sm overflow-x-auto mb-6">
-                                        <pre><code>{`void myFunction() {
+                                    <CodeBlock language="cpp" code={`void myFunction() {
   cout << "I just got executed!";
 }
 
 int main() {
   myFunction(); // call the function
   return 0;
-}`}</code></pre>
-                                    </div>
+}`} />
                                 </section>
 
                                 <hr className="border-gray-200" />
@@ -269,8 +261,7 @@ int main() {
                                     <p className="text-gray-700 mb-4">
                                         When the individual objects are created, they inherit all the variables and functions from the class.
                                     </p>
-                                    <div className="bg-gray-900 text-gray-100 rounded-lg p-6 font-mono text-sm overflow-x-auto mb-6">
-                                        <pre><code>{`class MyClass {       // The class
+                                    <CodeBlock language="cpp" code={`class MyClass {       // The class
   public:             // Access specifier
     int myNum;        // Attribute (int variable)
     string myString;  // Attribute (string variable)
@@ -286,8 +277,7 @@ int main() {
   cout << myObj.myNum << "\\n";
   cout << myObj.myString;
   return 0;
-}`}</code></pre>
-                                    </div>
+}`} />
                                 </section>
                             </div>
                         )
@@ -300,114 +290,17 @@ int main() {
     // =========================================================================
     // Java
     // =========================================================================
-    java: {
-        title: 'Java Programming',
-        lastUpdated: '10 Jan, 2026',
-        topics: [
-            {
-                id: 'java-basics',
-                title: 'Java Basics',
-                subItems: [
-                    { id: 'intro', title: 'Introduction to Java', content: <div>Content for Introduction to Java</div> },
-                    { id: 'basics', title: 'Java Programming Basics', content: <div>Content for Java Programming Basics</div> },
-                    { id: 'methods', title: 'Java Methods', content: <div>Content for Java Methods</div> },
-                    { id: 'access-modifiers', title: 'Access Modifiers in Java', content: <div>Content for Access Modifiers in Java</div> },
-                    { id: 'arrays', title: 'Arrays in Java', content: <div>Content for Arrays in Java</div> },
-                    { id: 'strings', title: 'Java Strings', content: <div>Content for Java Strings</div> },
-                    { id: 'regex', title: 'Regular Expressions in Java', content: <div>Content for Regular Expressions in Java</div> }
-                ]
-            },
-            {
-                id: 'oop-interfaces',
-                title: 'OOP & Interfaces',
-                subItems: [
-                    { id: 'classes-objects', title: 'Classes and Objects in Java', content: <div>Content for Classes and Objects in Java</div> },
-                    { id: 'constructors', title: 'Java Constructors', content: <div>Content for Java Constructors</div> },
-                    { id: 'oop-concepts', title: 'Java OOP Concepts', content: <div>Content for Java OOP Concepts</div> },
-                    { id: 'packages', title: 'Java Packages', content: <div>Content for Java Packages</div> },
-                    { id: 'interface', title: 'Java Interface', content: <div>Content for Java Interface</div> }
-                ]
-            }
-        ]
-    },
+    java: javaCourseContent,
 
     // =========================================================================
     // C Programming
     // =========================================================================
-    c: {
-        title: 'C Programming',
-        lastUpdated: '15 Feb, 2025',
-        topics: [
-            {
-                id: 'c-basics',
-                title: 'C Basics',
-                subItems: [
-                    { id: 'intro', title: 'C Language Introduction', content: <div>Content for C Language Introduction</div> },
-                    { id: 'identifiers', title: 'Identifiers in C', content: <div>Content for Identifiers in C</div> },
-                    { id: 'keywords', title: 'Keywords in C', content: <div>Content for Keywords in C</div> },
-                    { id: 'variables', title: 'Variables in C', content: <div>Content for Variables in C</div> },
-                    { id: 'datatypes', title: 'Data Types in C', content: <div>Content for Data Types in C</div> },
-                    { id: 'operators', title: 'Operators in C', content: <div>Content for Operators in C</div> },
-                    { id: 'decision-making', title: 'Decision Making in C', content: <div>Content for Decision Making in C</div> },
-                    { id: 'loops', title: 'Loops in C', content: <div>Content for Loops in C</div> },
-                    { id: 'functions', title: 'Functions in C', content: <div>Content for Functions in C</div> }
-                ]
-            },
-            {
-                id: 'arrays-strings',
-                title: 'Arrays & Strings',
-                subItems: [
-                    { id: 'arrays', title: 'Arrays in C', content: <div>Content for Arrays in C</div> },
-                    { id: 'strings', title: 'Strings in C', content: <div>Content for Strings in C</div> }
-                ]
-            },
-            {
-                id: 'pointers-structures',
-                title: 'Pointers and Structures',
-                subItems: [
-                    { id: 'pointers', title: 'Pointers in C', content: <div>Content for Pointers in C</div> },
-                    { id: 'function-pointer', title: 'Function Pointer in C', content: <div>Content for Function Pointer in C</div> },
-                    { id: 'unions', title: 'Unions in C', content: <div>Content for Unions in C</div> },
-                    { id: 'enum', title: 'Enumeration (or enum) in C', content: <div>Content for Enumeration in C</div> },
-                    { id: 'structure-member', title: 'Structure Member', content: <div>Content for Structure Member</div> },
-                    { id: 'alignment', title: 'Alignment, Padding and Data Packing', content: <div>Content for Alignment, Padding and Data Packing</div> }
-                ]
-            }
-        ]
-    },
+    c: cCourseContent,
 
     // =========================================================================
     // Python
     // =========================================================================
-    python: {
-        title: 'Python Programming',
-        lastUpdated: '20 Jan, 2026',
-        topics: [
-            {
-                id: 'basics',
-                title: 'Python Basics',
-                subItems: [
-                    {
-                        id: 'intro',
-                        title: 'Introduction',
-                        content: (
-                            <div className="space-y-6">
-                                <h2 className="text-2xl font-bold text-gray-900">Introduction to Python</h2>
-                                <p className="text-gray-700">Python is a popular programming language. It is used for web development (server-side), software development, mathematics, system scripting.</p>
-                                <div className="bg-yellow-50 border-l-4 border-yellow-500 p-4 rounded-r-lg">
-                                    <h3 className="text-lg font-semibold text-yellow-900">Why Python?</h3>
-                                    <p className="text-yellow-800 text-sm mt-1">Simple syntax similar to English. Works on different platforms (Windows, Mac, Linux).</p>
-                                </div>
-                                <div className="bg-gray-900 text-gray-100 rounded-lg p-6 font-mono text-sm overflow-x-auto">
-                                    <pre><code>{`print("Hello, World!")`}</code></pre>
-                                </div>
-                            </div>
-                        )
-                    }
-                ]
-            }
-        ]
-    },
+    python: pythonCourseContent,
 
     // =========================================================================
     // JavaScript
@@ -438,40 +331,7 @@ int main() {
     // =========================================================================
     // HTML5
     // =========================================================================
-    html5: {
-        title: 'HTML5 Tutorial',
-        lastUpdated: '10 Feb, 2026',
-        topics: [
-            {
-                id: 'basics',
-                title: 'HTML Basics',
-                subItems: [
-                    {
-                        id: 'intro',
-                        title: 'Introduction',
-                        content: (
-                            <div className="space-y-6">
-                                <h2 className="text-2xl font-bold text-gray-900">HTML Introduction</h2>
-                                <p className="text-gray-700">HTML stands for Hyper Text Markup Language. It is the standard markup language for creating Web pages.</p>
-                                <div className="bg-gray-900 text-gray-100 rounded-lg p-6 font-mono text-sm overflow-x-auto">
-                                    <pre><code>{`<!DOCTYPE html>
-<html>
-<head>
-<title>Page Title</title>
-</head>
-<body>
-<h1>My First Heading</h1>
-<p>My first paragraph.</p>
-</body>
-</html>`}</code></pre>
-                                </div>
-                            </div>
-                        )
-                    }
-                ]
-            }
-        ]
-    },
+    html5: htmlCourseContent,
 
     // =========================================================================
     // CSS3
@@ -508,35 +368,5 @@ h1 {
         ]
     },
 
-    // =========================================================================
-    // Aptitude
-    // =========================================================================
-    aptitude: {
-        title: 'Aptitude Preparation',
-        lastUpdated: '18 Feb, 2026',
-        topics: [
-            {
-                id: 'quant',
-                title: 'Quantitative Aptitude',
-                subItems: [
-                    {
-                        id: 'number_system',
-                        title: 'Number System',
-                        content: (
-                            <div className="space-y-6">
-                                <h2 className="text-2xl font-bold text-gray-900">Number System</h2>
-                                <p className="text-gray-700">The number system is the most important topic in quantitative aptitude.</p>
-                                <ul className="list-disc list-inside space-y-2 text-gray-700">
-                                    <li>Classification of Numbers</li>
-                                    <li>Divisibility Rules</li>
-                                    <li>Unit Digit Calculation</li>
-                                    <li>Remainders</li>
-                                </ul>
-                            </div>
-                        )
-                    }
-                ]
-            }
-        ]
-    }
+    // Aptitude removed
 };

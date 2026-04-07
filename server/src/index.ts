@@ -15,9 +15,13 @@ app.use(express.json());
 app.use(cors());
 
 import resourceRoutes from './routes/resourceRoutes';
+import userRoutes from './routes/userRoutes';
+import certificationRoutes from './routes/certificationRoutes';
 
 app.use('/api/auth', authRoutes);
 app.use('/api/resources', resourceRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/certifications', certificationRoutes);
 
 app.get('/', (req: Request, res: Response) => {
     res.send('API is running...');

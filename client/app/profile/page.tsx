@@ -4,11 +4,35 @@ import { useAuth } from '../../context/AuthContext';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { articles } from '../../data/articlesData';
 
 const ProfilePage = () => {
-    const { user, logout, loading } = useAuth();
+    const { user, favoriteArticles, logout, toggleFavorite, loading } = useAuth();
     const router = useRouter();
+    const [activeTab, setActiveTab] = useState('Dashboard');
+    const [userCertifications, setUserCertifications] = useState<any[]>([]);
+
+    useEffect(() => {
+        const fetchCertifications = async () => {
+            if (!user) return;
+            try {
+                const response = await fetch('http://localhost:5000/api/certifications/me', {
+                    headers: {
+                        'Authorization': `Bearer ${user?.token}`
+                    }
+                });
+                const data = await response.json();
+                if (data.certifications) {
+                    setUserCertifications(data.certifications);
+                }
+            } catch (error) {
+                console.error("Error fetching certifications:", error);
+            }
+        };
+
+        fetchCertifications();
+    }, [user]);
 
     useEffect(() => {
         if (!loading && !user) {
@@ -17,131 +41,197 @@ const ProfilePage = () => {
     }, [user, loading, router]);
 
     if (loading || !user) {
-        return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+        return <div className="min-h-screen flex items-center justify-center bg-gray-50 text-gray-800">Loading...</div>;
     }
 
-    const recentlyViewed = [
-        {
-            id: 1,
-            title: 'Advanced UX Design',
-            image: '/images/user_aptitude.jpg', // Placeholder reusing an existing image
-            progress: 75,
-            lessonsCompleted: 12,
-            totalLessons: 16
-        },
-        {
-            id: 2,
-            title: 'Python for Beginners',
-            image: '/images/python.jpg',
-            progress: 30,
-            lessonsCompleted: 3,
-            totalLessons: 10
-        }
-    ];
+    const mappedFavoriteArticles = favoriteArticles
+        .map(id => articles.find(a => a.id === id))
+        .filter(Boolean);
 
     return (
-        <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
-            <div className="max-w-md mx-auto space-y-8">
-                {/* Profile Header */}
-                <div className="flex flex-col items-center">
-                    <h1 className="text-2xl font-bold text-gray-900 self-start mb-6">Profile</h1>
-
-                    <div className="relative">
-                        <div className="h-28 w-28 rounded-full overflow-hidden border-4 border-white shadow-lg mx-auto">
-                            <Image
-                                src="/images/avatar.svg"
-                                alt="Profile"
-                                width={112}
-                                height={112}
-                                className="object-cover h-full w-full"
-                            />
-                        </div>
-                        <div className="absolute bottom-0 right-0 bg-blue-600 rounded-full p-2 text-white border-2 border-white cursor-pointer hover:bg-blue-700">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+        <div className="min-h-screen bg-gray-50 pb-20 font-sans">
+            {/* Dark Blue Header Section */}
+            <div className="bg-[#0f172a] rounded-b-[2.5rem] pt-6 px-6 pb-12 shadow-md relative">
+                {/* Top Bar */}
+                <div className="flex justify-between items-center mb-6">
+                    <div className="text-white font-bold text-lg">
+                        Knowledge Hub <span className="text-blue-400">Portal</span>
+                    </div>
+                    <div className="flex items-center gap-4">
+                        <Link href="/" className="text-gray-300 text-sm font-medium hover:text-white transition-colors bg-white/10 px-3 py-1.5 rounded-full border border-white/20 hover:bg-white/20 flex items-center gap-2">
+                             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                             </svg>
+                             Home
+                        </Link>
+                        <button className="relative p-1 text-gray-300 hover:text-white">
+                            <span className="sr-only">Notifications</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
                             </svg>
-                        </div>
+                            <span className="absolute top-1 right-1.5 block h-2 w-2 rounded-full bg-red-500 ring-2 ring-[#0f172a]" />
+                        </button>
+                        <button onClick={logout} className="text-gray-300 text-sm font-medium hover:text-white transition-colors">
+                            Logout
+                        </button>
                     </div>
-
-                    <h2 className="mt-4 text-2xl font-bold text-gray-900">{user.username}</h2>
-                    <p className="text-gray-500 text-sm">Member since January 2026</p>
                 </div>
 
-                {/* Last Viewed Courses */}
-                <div>
-                    <div className="flex justify-between items-center mb-4">
-                        <h3 className="text-lg font-bold text-gray-900">Last Viewed Courses</h3>
-                        <button className="text-blue-600 text-sm font-semibold hover:text-blue-700">View All</button>
+                {/* Profile Identity */}
+                <div className="flex flex-col items-center mt-4">
+                    <div className="relative">
+                        <div className="h-24 w-24 rounded-full bg-gradient-to-tr from-orange-200 to-orange-100 border-2 border-white/20 p-0.5 overflow-hidden flex justify-center items-end">
+                            {/* Simple illustration avatar */}
+                            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Philip" alt="User" className="w-full h-full object-cover rounded-full bg-orange-100" />
+                        </div>
+                        <div className="absolute bottom-1 right-1 h-5 w-5 bg-green-500 border-2 border-[#0f172a] rounded-full"></div>
                     </div>
 
-                    <div className="space-y-4">
-                        <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
-                            {recentlyViewed.map((course) => (
-                                <div key={course.id} className="min-w-[260px] bg-white rounded-2xl p-4 shadow-sm border border-gray-100 flex-shrink-0">
-                                    <div className="relative h-32 w-full rounded-xl overflow-hidden mb-4 bg-gray-100">
-                                        <Image
-                                            src={course.image}
-                                            alt={course.title}
-                                            fill
-                                            className="object-cover"
-                                        />
-                                    </div>
-                                    <h4 className="font-bold text-gray-900 mb-3 truncate">{course.title}</h4>
+                    <h1 className="mt-4 text-2xl font-bold text-white tracking-wide">
+                        {user.username}
+                    </h1>
+                    <p className="mt-2 text-center text-gray-400 text-sm max-w-xs leading-relaxed">
+                        Enthusiastic learner exploring the intersections of Biotechnology and Artificial Intelligence.
+                    </p>
+                </div>
 
-                                    <div className="space-y-2">
-                                        <div className="flex justify-between text-xs text-gray-500 font-medium">
-                                            <span>{course.progress}% Complete</span>
-                                            <span>{course.lessonsCompleted}/{course.totalLessons} Lessons</span>
-                                        </div>
-                                        <div className="w-full bg-gray-100 rounded-full h-1.5 overflow-hidden">
-                                            <div
-                                                className="bg-blue-600 h-1.5 rounded-full"
-                                                style={{ width: `${course.progress}%` }}
+                {/* Stats Container Inside Header */}
+                <div className="mt-8 mx-auto max-w-sm border border-white/10 bg-white/5 rounded-2xl py-4 flex justify-between px-6 backdrop-blur-sm">
+                    <div className="text-center flex-1">
+                        <div className="text-white font-bold text-xl">{mappedFavoriteArticles.length}</div>
+                        <div className="text-gray-400 text-[10px] font-semibold tracking-widest mt-1">FAV ARTICLES</div>
+                    </div>
+                    <div className="w-[1px] bg-white/10 hidden sm:block"></div>
+                    <div className="text-center flex-1 border-l border-r border-white/10">
+                        <div className="text-white font-bold text-xl">08</div>
+                        <div className="text-gray-400 text-[10px] font-semibold tracking-widest mt-1">COURSES</div>
+                    </div>
+                    <div className="w-[1px] bg-white/10 hidden sm:block"></div>
+                    <div className="text-center flex-1">
+                        <div className="text-white font-bold text-xl">1,250</div>
+                        <div className="text-gray-400 text-[10px] font-semibold tracking-widest mt-1">POINTS</div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Toggle Tabs overlaying the border */}
+            <div className="max-w-md mx-auto px-6 -mt-6 relative z-10">
+                <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
+                    {['Dashboard', 'Certificates'].map((tab) => (
+                        <button
+                            key={tab}
+                            onClick={() => setActiveTab(tab)}
+                            className={`px-6 py-2.5 rounded-full text-sm font-bold whitespace-nowrap shadow-sm transition-all ${activeTab === tab
+                                ? 'bg-blue-500 text-white shadow-blue-500/30'
+                                : 'bg-white text-gray-600 hover:bg-gray-50'
+                                }`}
+                        >
+                            {tab}
+                        </button>
+                    ))}
+                </div>
+            </div>
+
+            {/* Main Content Areas */}
+            <div className="max-w-md mx-auto mt-8 px-6 space-y-8">
+
+                {/* Favorite Articles Section */}
+                {activeTab === 'Dashboard' && (
+                    <section>
+                        <div className="flex justify-between items-end mb-4">
+                            <h2 className="text-xl font-bold text-[#1e293b]">Favorite Articles</h2>
+                            <button onClick={() => router.push('/articles')} className="text-blue-500 text-xs font-bold tracking-wide hover:text-blue-600 uppercase">View All</button>
+                        </div>
+
+                        <div className="space-y-4">
+                            {mappedFavoriteArticles.length === 0 ? (
+                                <div className="text-center py-6 text-gray-500 text-sm bg-white rounded-2xl border border-gray-100 shadow-sm">
+                                    You haven't added any favorite articles yet.<br />
+                                    <Link href="/articles" className="text-blue-500 hover:underline mt-2 inline-block">Explore Articles</Link>
+                                </div>
+                            ) : (
+                                mappedFavoriteArticles.map((article: any) => (
+                                    <div 
+                                        key={article.id} 
+                                        className="group relative bg-black rounded-2xl h-44 overflow-hidden shadow-sm cursor-pointer border border-gray-100"
+                                        onClick={() => router.push(`/articles/${article.slug}`)}
+                                    >
+                                        {article.imageUrl ? (
+                                            <img
+                                                src={article.imageUrl}
+                                                alt={article.title}
+                                                className="w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-700"
                                             />
+                                        ) : (
+                                            <div className={`w-full h-full opacity-60 bg-gradient-to-br ${article.color} group-hover:scale-105 transition-transform duration-700`} />
+                                        )}
+                                        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent"></div>
+
+                                        <div className="absolute top-4 left-4">
+                                            <span className="bg-white/20 backdrop-blur-md border border-white/20 text-white text-[10px] font-bold px-3 py-1.5 rounded-full tracking-widest uppercase">
+                                                {article.category}
+                                            </span>
+                                        </div>
+
+                                        <div className="absolute bottom-4 left-4 right-4 cursor-pointer">
+                                            <h3 className="text-white font-bold text-base leading-snug mb-1 pr-6 hover:text-blue-300 transition-colors">
+                                                {article.title}
+                                            </h3>
+                                            <p className="text-gray-300 text-xs line-clamp-1">
+                                                {article.description}
+                                            </p>
+                                        </div>
+
+                                        {/* Like Button */}
+                                        <button 
+                                            className="absolute bottom-4 right-4 text-white hover:scale-110 transition-transform group/like"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                toggleFavorite(article.id);
+                                            }}
+                                        >
+                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 fill-red-500 text-red-500 group-hover/like:text-red-400 group-hover/like:fill-red-400 transition-colors" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                ))
+                            )}
+                        </div>
+                    </section>
+                )}
+
+                {activeTab === 'Certificates' && (
+                    <section>
+                        <h2 className="text-xl font-bold text-[#1e293b] mb-4">Your Achievements</h2>
+                        <div className="space-y-4">
+                            {userCertifications.length === 0 ? (
+                                <div className="text-center py-12 bg-white rounded-3xl border border-dashed border-gray-200">
+                                    <div className="text-4xl mb-4">🎓</div>
+                                    <p className="text-gray-500 text-sm mb-4">You haven't earned any certifications yet.</p>
+                                    <Link href="/certifications" className="px-6 py-2 bg-indigo-600 text-white text-xs font-bold rounded-full hover:bg-indigo-700 transition-all">
+                                        Browse Certifications
+                                    </Link>
+                                </div>
+                            ) : (
+                                userCertifications.map((cert) => (
+                                    <div key={cert.courseId} className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 flex items-center gap-4">
+                                        <div className="h-12 w-12 rounded-full bg-green-100 flex items-center justify-center text-green-600 text-xl font-bold">
+                                            ✓
+                                        </div>
+                                        <div className="flex-1">
+                                            <h3 className="font-bold text-gray-900 text-sm capitalize">{cert.courseId === 'java' ? 'Java Programming' : cert.courseId} - Certified</h3>
+                                            <p className="text-[10px] text-gray-400 uppercase tracking-widest font-bold">Pass Percentage: {Math.round(cert.score)}%</p>
+                                        </div>
+                                        <div className="text-right">
+                                            <span className="text-[10px] font-bold text-indigo-600 bg-indigo-50 px-2 py-1 rounded-full">GOLD TIER</span>
                                         </div>
                                     </div>
-                                </div>
-                            ))}
+                                ))
+                            )}
                         </div>
-                    </div>
-                </div>
-
-                {/* Account Settings */}
-                <div>
-                    <h3 className="text-lg font-bold text-gray-900 mb-4">Account Settings</h3>
-                    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                        {[
-                            { name: 'My Certificates', icon: 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z', color: 'bg-blue-100 text-blue-600' },
-                            { name: 'Payment Methods', icon: 'M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z', color: 'bg-indigo-100 text-indigo-600' },
-                            { name: 'Settings', icon: 'M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z M15 12a3 3 0 11-6 0 3 3 0 016 0z', color: 'bg-blue-50 text-blue-600' }
-                        ].map((item, index) => (
-                            <Link href="#" key={index} className="flex items-center justify-between p-4 hover:bg-gray-50 transition-colors border-b last:border-b-0 border-gray-100">
-                                <div className="flex items-center gap-4">
-                                    <div className={`h-10 w-10 rounded-xl flex items-center justify-center ${item.color}`}>
-                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={item.icon} />
-                                        </svg>
-                                    </div>
-                                    <span className="font-semibold text-gray-900">{item.name}</span>
-                                </div>
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                                </svg>
-                            </Link>
-                        ))}
-                    </div>
-                </div>
-
-                {/* Log Out Button */}
-                <button
-                    onClick={logout}
-                    className="w-full bg-white text-red-500 font-bold py-4 rounded-2xl shadow-sm border border-gray-100 flex items-center justify-center gap-2 hover:bg-red-50 transition-colors"
-                >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                    </svg>
-                    Log Out
-                </button>
+                    </section>
+                )}
             </div>
         </div>
     );

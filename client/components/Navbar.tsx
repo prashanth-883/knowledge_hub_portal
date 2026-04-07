@@ -18,15 +18,12 @@ const Navbar = () => {
                             <Link href="/" className="text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 border-transparent hover:border-gray-800 text-sm font-medium">
                                 Courses
                             </Link>
-                            <a href="#" className="text-gray-500 inline-flex items-center px-1 pt-1 border-b-2 border-transparent hover:border-gray-800 hover:text-gray-900 text-sm font-medium">
-                                Tutorials
-                            </a>
-                            <a href="#" className="text-gray-500 inline-flex items-center px-1 pt-1 border-b-2 border-transparent hover:border-gray-800 hover:text-gray-900 text-sm font-medium">
-                                Jobs
-                            </a>
-                            <a href="#" className="text-gray-500 inline-flex items-center px-1 pt-1 border-b-2 border-transparent hover:border-gray-800 hover:text-gray-900 text-sm font-medium">
-                                Practice
-                            </a>
+                            <Link href="/articles" className="text-gray-500 inline-flex items-center px-1 pt-1 border-b-2 border-transparent hover:border-gray-800 hover:text-gray-900 text-sm font-medium">
+                                Articles
+                            </Link>
+                            <Link href="/certifications" className="text-gray-500 inline-flex items-center px-1 pt-1 border-b-2 border-transparent hover:border-gray-800 hover:text-gray-900 text-sm font-medium">
+                                Certifications
+                            </Link>
                         </div>
                     </div>
 
@@ -45,12 +42,9 @@ const Navbar = () => {
                         {user ? (
                             <div className="flex items-center space-x-3">
                                 {/* User Avatar */}
-                                <div className="h-8 w-8 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-sm cursor-pointer" title={user.username}>
+                                <div onClick={() => window.location.href = '/profile'} className="h-8 w-8 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-sm cursor-pointer hover:ring-2 hover:ring-blue-300 transition-all" title={user.username}>
                                     {user.username.charAt(0).toUpperCase()}
                                 </div>
-                                <button onClick={logout} className="text-sm text-gray-500 hover:text-gray-900">
-                                    Logout
-                                </button>
                             </div>
                         ) : (
                             <div className="flex items-center space-x-2">

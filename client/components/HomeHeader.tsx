@@ -17,7 +17,7 @@ const HomeHeader = () => {
                     </svg>
                     <span className="absolute top-2 right-2.5 block h-2 w-2 rounded-full bg-red-500 ring-2 ring-white" />
                 </button>
-                <div className="h-10 w-10 rounded-full bg-gradient-to-tr from-blue-100 to-blue-200 p-0.5 cursor-pointer">
+                <Link href="/profile" className="h-10 w-10 rounded-full bg-gradient-to-tr from-blue-100 to-blue-200 p-0.5 cursor-pointer block">
                     <div className="h-full w-full rounded-full bg-white flex items-center justify-center overflow-hidden">
                         <img
                             src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix"
@@ -25,7 +25,7 @@ const HomeHeader = () => {
                             className="h-full w-full object-cover"
                         />
                     </div>
-                </div>
+                </Link>
             </div>
         </header>
     );

@@ -24,8 +24,13 @@ export default function TopicPage() {
     // Update state when course loads or changes
     useEffect(() => {
         if (course && course.topics.length > 0) {
-            setActiveTopicId(course.topics[0].id);
-            setActiveSubItemId(course.topics[0].subItems[0].id);
+            const firstTopic = course.topics[0];
+            setActiveTopicId(firstTopic.id);
+            if (firstTopic.subItems && firstTopic.subItems.length > 0) {
+                setActiveSubItemId(firstTopic.subItems[0].id);
+            } else {
+                setActiveSubItemId(firstTopic.id);
+            }
         }
     }, [course]);
 
@@ -60,7 +65,12 @@ export default function TopicPage() {
 
     // Find the active content
     const activeTopic = course.topics.find(t => t.id === activeTopicId);
-    const activeSubItem = activeTopic?.subItems.find(s => s.id === activeSubItemId);
+    let activeSubItem = activeTopic?.subItems?.find(s => s.id === activeSubItemId);
+
+    // If the topic doesn't have subItems, it acts as its own subItem
+    const isDirectTopic = activeTopic && (!activeTopic.subItems || activeTopic.subItems.length === 0);
+    const displayTitle = isDirectTopic ? activeTopic.title : (activeSubItem?.title || "Select a Topic");
+    const displayContent = isDirectTopic ? activeTopic.content : (activeSubItem?.content || <div>Select a topic to view content</div>);
 
     const handleSelect = (topicId: string, subItemId: string) => {
         setActiveTopicId(topicId);
@@ -92,9 +102,9 @@ export default function TopicPage() {
                 {/* Main Content */}
                 <CourseContent
                     courseTitle={course.title}
-                    title={activeSubItem?.title || "Select a Topic"}
+                    title={displayTitle}
                     lastUpdated={course.lastUpdated}
-                    content={activeSubItem?.content || <div>Select a topic to view content</div>}
+                    content={displayContent}
                     onNext={handleNext}
                     onPrev={() => { }}
                 />

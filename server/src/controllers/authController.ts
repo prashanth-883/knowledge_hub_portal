@@ -12,10 +12,15 @@ export const registerUser = async (req: Request, res: Response): Promise<void> =
     const { username, email, password } = req.body;
 
     try {
-        const userExists = await User.findOne({ email });
+        const emailExists = await User.findOne({ email });
+        if (emailExists) {
+            res.status(400).json({ message: 'Email already exists' });
+            return;
+        }
 
-        if (userExists) {
-            res.status(400).json({ message: 'User already exists' });
+        const usernameExists = await User.findOne({ username });
+        if (usernameExists) {
+            res.status(400).json({ message: 'Username is already taken' });
             return;
         }
 
@@ -30,12 +35,12 @@ export const registerUser = async (req: Request, res: Response): Promise<void> =
                 _id: (user._id as unknown as string),
                 username: user.username,
                 email: user.email,
-                // token removed to force login
             });
         } else {
             res.status(400).json({ message: 'Invalid user data' });
         }
     } catch (error: any) {
+        console.error("Registration error:", error);
         res.status(500).json({ message: 'Server error', error: error.message });
     }
 };

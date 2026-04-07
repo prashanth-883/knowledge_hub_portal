@@ -16,7 +16,7 @@ const topics = [
     { title: 'JavaScript', image: '/images/js.jpg', href: '/topics/javascript' },
     { title: 'HTML5', image: '/images/user_c.jpg', href: '/topics/html5' },
     { title: 'CSS3', image: '/images/user_aptitude.jpg', href: '/topics/css3' },
-    { title: 'Aptitude', image: '/images/user_css.jpg', href: '/topics/aptitude' },
+    // Removed Aptitude
 ];
 
 const TopicGrid = () => {

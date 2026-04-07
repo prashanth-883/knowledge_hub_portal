@@ -13,9 +13,11 @@ interface User {
 
 interface AuthContextType {
     user: User | null;
+    favoriteArticles: number[];
     login: (username: string, password: string) => Promise<void>;
     register: (username: string, email: string, password: string) => Promise<void>;
     logout: () => void;
+    toggleFavorite: (articleId: number) => Promise<void>;
     loading: boolean;
 }
 
@@ -23,6 +25,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [user, setUser] = useState<User | null>(null);
+    const [favoriteArticles, setFavoriteArticles] = useState<number[]>([]);
     const [loading, setLoading] = useState(true);
     const router = useRouter();
 
@@ -34,6 +37,24 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setLoading(false);
     }, []);
 
+    useEffect(() => {
+        const fetchFavorites = async () => {
+             if (user?.token) {
+                 try {
+                     const { data } = await axios.get('http://localhost:5000/api/users/favorites', {
+                         headers: { Authorization: `Bearer ${user.token}` }
+                     });
+                     setFavoriteArticles(data.favoriteArticles || []);
+                 } catch (error) {
+                     console.error('Failed to fetch favorite articles:', error);
+                 }
+             } else {
+                 setFavoriteArticles([]);
+             }
+        };
+        fetchFavorites();
+    }, [user]);
+
     const login = async (username: string, password: string) => {
         try {
             const { data } = await axios.post('http://localhost:5000/api/auth/login', { username, password });
@@ -41,6 +62,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             localStorage.setItem('user', JSON.stringify(data));
             router.push('/');
         } catch (error: any) {
+            if (error.code === 'ERR_NETWORK') {
+                throw new Error('Cannot connect to server. Ensure the backend is running.');
+            }
             console.error('Login failed:', error.response?.data?.message || error.message);
             throw error;
         }
@@ -49,19 +73,38 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         try {
             await axios.post('http://localhost:5000/api/auth/register', { username, email, password });
         } catch (error: any) {
+            if (error.code === 'ERR_NETWORK') {
+                throw new Error('Cannot connect to server. Ensure the backend is running.');
+            }
             console.error('Registration failed:', error.response?.data?.message || error.message);
+            throw error;
+        }
+    };
+
+    const toggleFavorite = async (articleId: number) => {
+        if (!user?.token) return;
+        try {
+            const { data } = await axios.put(
+                'http://localhost:5000/api/users/favorites',
+                { articleId },
+                { headers: { Authorization: `Bearer ${user.token}` } }
+            );
+            setFavoriteArticles(data.favoriteArticles);
+        } catch (error) {
+            console.error('Failed to toggle favorite:', error);
             throw error;
         }
     };
 
     const logout = () => {
         setUser(null);
+        setFavoriteArticles([]);
         localStorage.removeItem('user');
         router.push('/login');
     };
 
     return (
-        <AuthContext.Provider value={{ user, login, register, logout, loading }}>
+        <AuthContext.Provider value={{ user, favoriteArticles, login, register, logout, toggleFavorite, loading }}>
             {children}
         </AuthContext.Provider>
     );

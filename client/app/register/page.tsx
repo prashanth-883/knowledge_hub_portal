@@ -20,7 +20,7 @@ export default function RegisterPage() {
             toast.success('Registered successfully! Please login.');
             router.push('/login');
         } catch (error: any) {
-            toast.error(error.response?.data?.message || 'Registration failed');
+            toast.error(error.response?.data?.message || error.message || 'Registration failed');
         }
     };
 

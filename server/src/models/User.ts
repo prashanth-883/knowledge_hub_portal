@@ -1,17 +1,31 @@
 import mongoose, { Document, Schema } from 'mongoose';
 import bcrypt from 'bcryptjs';
 
+export interface ICertification {
+    courseId: string;
+    score: number;
+    completedAt: Date;
+}
+
 export interface IUser extends Document {
     username: string;
     email: string;
     password: string;
+    favoriteArticles: number[];
+    certifications: ICertification[];
     matchPassword(enteredPassword: string): Promise<boolean>;
 }
 
 const UserSchema: Schema = new Schema({
-    username: { type: String, required: true },
+    username: { type: String, required: true, unique: true },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
+    favoriteArticles: [{ type: Number }],
+    certifications: [{
+        courseId: { type: String, required: true },
+        score: { type: Number, required: true },
+        completedAt: { type: Date, default: Date.now }
+    }]
 }, {
     timestamps: true,
 });
